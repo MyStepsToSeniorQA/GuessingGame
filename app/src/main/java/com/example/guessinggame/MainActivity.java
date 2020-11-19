@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private int range = 100;
     private TextView lblRange;
 
+
     public void checkGuess() {
         String guessText = txtGuess.getText().toString();
         String message = "";
