@@ -38,12 +38,15 @@ public class MainActivity extends AppCompatActivity {
         try {
             int guess = Integer.parseInt(guessText);
             if(guess < theNumber ) {
+                tries++;
                 message = guess + " is too low. Try again.";
             } else  if (guess > theNumber ) {
+                tries++;
                 message = guess + " is too high. Try again.";
             } else {
-                message = guess + " is correct. You win!  Let's play again!";
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                tries++;
+                message = guess + " is correct. You win! "+ tries + " tries. Let's play again!";
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                 SharedPreferences preferences =
                         PreferenceManager.getDefaultSharedPreferences(this);
                 int gameWon = preferences.getInt("gameWon", 0) + 1;
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         txtGuess.setText("" + range/2);
         txtGuess.requestFocus();
         txtGuess.selectAll();
+        tries = 0;
     }
 
     @Override
