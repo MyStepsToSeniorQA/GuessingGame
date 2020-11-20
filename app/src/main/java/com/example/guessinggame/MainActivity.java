@@ -37,13 +37,19 @@ public class MainActivity extends AppCompatActivity {
         String message = "";
         try {
             int guess = Integer.parseInt(guessText);
-            if(guess < theNumber ) {
+            if(guess < theNumber & maxTries != 0 ) {
+                maxTries--;
                 tries++;
-                message = guess + " is too low. Try again.";
-            } else  if (guess > theNumber ) {
+                message = guess + " is too low. " + maxTries +" tries left. Try again.";
+            } else  if (guess > theNumber & maxTries != 0 ) {
+                maxTries--;
                 tries++;
-                message = guess + " is too high. Try again.";
+                message = guess + " is too high. " + maxTries +" tries left. Try again.";
+            }else  if(maxTries < 1){
+                message = "You lose all tries :( It was " + theNumber + ". Let's play again!";
+                newGame();
             } else {
+                maxTries--;
                 tries++;
                 message = guess + " is correct. You win! "+ tries + " tries. Let's play again!";
                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         txtGuess.requestFocus();
         txtGuess.selectAll();
         tries = 0;
+        maxTries = 7;
     }
 
     @Override
