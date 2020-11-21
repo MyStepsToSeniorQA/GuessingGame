@@ -21,6 +21,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.DecimalFormat;
+
 public class MainActivity extends AppCompatActivity {
     private EditText txtGuess;
     private Button btnGuess;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private int theNumber;
     public int maxTries = 7;
     public int tries = 0;
+    public double winrate = 0;
+    public double winrateMain;
     private int range = 100;
     private TextView lblRange;
 
@@ -47,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
                 message = guess + " is too high. " + maxTries +" tries left. Try again.";
             }else  if(maxTries < 1){
                 message = "You lose all tries :( It was " + theNumber + ". Let's play again!";
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                SharedPreferences preferences =
+                        PreferenceManager.getDefaultSharedPreferences(this);
+                int gameLose = preferences.getInt("gameLose", 0) + 1;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("gameLose", gameLose);
+                editor.apply();
                 newGame();
             } else {
                 maxTries--;
@@ -166,10 +177,17 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences preferences =
                         PreferenceManager.getDefaultSharedPreferences(this);
                 int gameWon = preferences.getInt("gameWon", 0);
+                int gameLose = preferences.getInt("gameLose", 0);
+                winrate = ( (double) gameWon/((double) gameLose+ (double)gameWon))*100;
+                winrateMain = winrate;
+                DecimalFormat df = new DecimalFormat("#.##");
+                String dwinrateMain = df.format(winrate);
+                winrate = Double.valueOf(dwinrateMain);
+
                 AlertDialog statDialog = new AlertDialog.Builder(MainActivity.this).create();
                 statDialog.setTitle("Guessing Game Stats");
-                statDialog.setMessage("You have won " + gameWon +
-                        " games.  Way to go!");
+                statDialog.setMessage("You have won " + gameWon +" out of " + (gameLose+gameWon) +
+                        " games, "+winrate+"%.  Way to go!");
                 statDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             @Override
