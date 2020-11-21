@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         txtGuess.requestFocus();
         txtGuess.selectAll();
         tries = 0;
-        maxTries = 7;
+        maxTries = (int) (Math.log(range)/Math.log(2) + 1);
     }
 
     @Override
