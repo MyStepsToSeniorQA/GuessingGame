@@ -178,11 +178,11 @@ public class MainActivity extends AppCompatActivity {
                         PreferenceManager.getDefaultSharedPreferences(this);
                 int gameWon = preferences.getInt("gameWon", 0);
                 int gameLose = preferences.getInt("gameLose", 0);
-                winrate = ( (double) gameWon/((double) gameLose+ (double)gameWon))*100;
+                winrate = (int) (( (double) gameWon/((double) gameLose+ (double)gameWon))*100);
                 winrateMain = winrate;
-                DecimalFormat df = new DecimalFormat("#.##");
-                String dwinrateMain = df.format(winrate);
-                winrate = Double.valueOf(dwinrateMain);
+                //DecimalFormat df = new DecimalFormat("#.##");
+               // String dwinrateMain = df.format(winrate);
+               // winrate = Double.valueOf(dwinrateMain);
 
                 AlertDialog statDialog = new AlertDialog.Builder(MainActivity.this).create();
                 statDialog.setTitle("Guessing Game Stats");
