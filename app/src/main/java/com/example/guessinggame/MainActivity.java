@@ -21,6 +21,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.text.DecimalFormat;
+
 public class MainActivity extends AppCompatActivity {
     private EditText txtGuess;
     private Button btnGuess;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private int theNumber;
     public int maxTries = 7;
     public int tries = 0;
+    public double winrate = 0;
+    public double winrateMain;
     private int range = 100;
     private TextView lblRange;
 
@@ -37,13 +41,26 @@ public class MainActivity extends AppCompatActivity {
         String message = "";
         try {
             int guess = Integer.parseInt(guessText);
-            if(guess < theNumber ) {
+            if(guess < theNumber & maxTries != 0 ) {
+                maxTries--;
                 tries++;
-                message = guess + " is too low. Try again.";
-            } else  if (guess > theNumber ) {
+                message = guess + " is too low. " + maxTries +" tries left. Try again.";
+            } else  if (guess > theNumber & maxTries != 0 ) {
+                maxTries--;
                 tries++;
-                message = guess + " is too high. Try again.";
+                message = guess + " is too high. " + maxTries +" tries left. Try again.";
+            }else  if(maxTries < 1){
+                message = "You lose all tries :( It was " + theNumber + ". Let's play again!";
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                SharedPreferences preferences =
+                        PreferenceManager.getDefaultSharedPreferences(this);
+                int gameLose = preferences.getInt("gameLose", 0) + 1;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("gameLose", gameLose);
+                editor.apply();
+                newGame();
             } else {
+                maxTries--;
                 tries++;
                 message = guess + " is correct. You win! "+ tries + " tries. Let's play again!";
                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -72,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         txtGuess.requestFocus();
         txtGuess.selectAll();
         tries = 0;
+        maxTries = (int) (Math.log(range)/Math.log(2) + 1);
     }
 
     @Override
@@ -159,10 +177,17 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences preferences =
                         PreferenceManager.getDefaultSharedPreferences(this);
                 int gameWon = preferences.getInt("gameWon", 0);
+                int gameLose = preferences.getInt("gameLose", 0);
+                winrate = (int) (( (double) gameWon/((double) gameLose+ (double)gameWon))*100);
+                winrateMain = winrate;
+                //DecimalFormat df = new DecimalFormat("#.##");
+               // String dwinrateMain = df.format(winrate);
+               // winrate = Double.valueOf(dwinrateMain);
+
                 AlertDialog statDialog = new AlertDialog.Builder(MainActivity.this).create();
                 statDialog.setTitle("Guessing Game Stats");
-                statDialog.setMessage("You have won " + gameWon +
-                        " games.  Way to go!");
+                statDialog.setMessage("You have won " + gameWon +" out of " + (gameLose+gameWon) +
+                        " games, "+winrate+"%.  Way to go!");
                 statDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             @Override
